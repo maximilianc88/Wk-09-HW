@@ -1,0 +1,25 @@
+{
+  "name": "maxs-package",
+  "version": "1.0.0",
+  "description": "Week-09-HW",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maximilianc88/Wk-09-HW.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/maximilianc88/Wk-09-HW/issues"
+  },
+  "homepage": "https://github.com/maximilianc88/Wk-09-HW#readme",
+  "dependencies": {
+    "axios": "^0.19.2",
+    "fs": "0.0.1-security",
+    "inquirer": "^7.0.4",
+    "util": "^0.12.1"
+  }
+}
