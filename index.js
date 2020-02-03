@@ -3,6 +3,8 @@ const fs = require("fs");
 const util = require("util");
 const axios = require("axios");
 
+const puppeteer = require('puppeteer');
+
 const writeFileAsync = util.promisify(fs.writeFile);
 
 const colors = {
@@ -47,7 +49,7 @@ function promptUser() {
   ]);
 }
 
-function generateHTML(data) {
+function generateHTML(data, res) {
   return `
     <!DOCTYPE html>
     <html lang="en">
@@ -222,7 +224,7 @@ function generateHTML(data) {
           left: 10%;
           width: 80%; height: 300px;"
           >
-          <img src="https://www.fillmurray.com/100/100" class="img-fluid" alt="Responsive image" style="border-width: .3rem;
+          <img src="${res.data.avatar_url}" class="img-fluid" alt="Responsive image" style="border-width: .3rem;
           position: absolute;
           bottom: 47%;
           left: 41%;
@@ -238,10 +240,10 @@ function generateHTML(data) {
         left: 10%;">
             <div class="text-center">
               <h3 style="color: white;">Hi! </h3>
-              <h3 style="color: white;">My name is Max </h3>
-              <h4 style="color: white;">Currently @@ ZillowGroup</h4>
+              <h3 style="color: white;">My name is ${res.data.name} </h3>
+              <h4 style="color: white;">Currently @ ${res.data.company}</h4>
               <div class="text-center" style="display:flex; flex-direction: row; justify-content: center;">
-              <p style="color: white;">Seattle, WA</p>
+              <p style="color: white;">${res.data.location}</p>
               <p class="mx-4" style="color: white;">GitHub</p>
               <p style="color: white;">Blog</p>
             </div>
@@ -264,7 +266,7 @@ function generateHTML(data) {
             color: ${colors[data.color].headerColor};">
               <div class="card-body">
                 <h5 class="card-title">Public Repositories</h5>
-                <p class="card-text">#</p>
+                <p class="card-text">${res.data.public_repos}</p>
               </div>
             </div>
           </div>
@@ -274,7 +276,7 @@ function generateHTML(data) {
             color: ${colors[data.color].headerColor};">
               <div class="card-body">
                 <h5 class="card-title">Followers</h5>
-                <p class="card-text">#</p>
+                <p class="card-text">${res.data.followers}</p>
               </div>
             </div>
           </div>
@@ -302,7 +304,7 @@ function generateHTML(data) {
             color: ${colors[data.color].headerColor};">
               <div class="card-body">
                 <h5 class="card-title">Following</h5>
-                <p class="card-text">#</p>
+                <p class="card-text">${res.data.following}</p>
               </div>
             </div>
           </div>
@@ -316,13 +318,24 @@ function generateHTML(data) {
     </html>`;
 }
 
-promptUser()
-  .then(data => {
-    const html = generateHTML(data);
+  async function init() {
+    console.log('initializing...');
+    try {
+      const data = await promptUser();
+        const queryUrl = `https://api.github.com/users/${data.github}`;
+       axios.get(queryUrl).then(res => {
+        console.log(res.data.followers);
+        const html = generateHTML(data, res); 
+        writeFileAsync('index.html', html);
+}
+    )
+      
+  
+ 
+      console.log('Successfully wrote to index.html');
+    } catch (err) {
+      console.error(err);
+    }
+  }
 
-    return writeFileAsync("index.html", html);
-  })
-  .then(() => {
-    console.log("Successfully wrote to index.html");
-  })
-  .catch(console.error);
+  init();
